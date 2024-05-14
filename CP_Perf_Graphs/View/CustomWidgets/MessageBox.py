@@ -16,15 +16,21 @@ class MessageBox(flet.AlertDialog):
                             flet.IconButton(
                                 icon=flet.icons.CLOSE,
                                 icon_color=text_color,
+                                style=flet.ButtonStyle(
+                                    shape=flet.RoundedRectangleBorder(radius=8)
+                                ),
                                 on_click=on_close_method
                             )
                         ],
                         alignment=flet.MainAxisAlignment.END
                     ),
-                    flet.Text(
-                        value=text,
-                        color=text_color,
-                        weight=flet.FontWeight.W_600
+                    flet.Container(
+                        content=flet.Text(
+                            value=text,
+                            color=text_color,
+                            weight=flet.FontWeight.W_600
+                        ),
+                        padding=flet.padding.only(20,0,20,0)
                     )
                 ],
                 height=height
@@ -32,5 +38,5 @@ class MessageBox(flet.AlertDialog):
             bgcolor=bgcolor,
             modal=True,
             shape=flet.RoundedRectangleBorder(radius=8),
-            content_padding=flet.padding.only(20,5,20,20)
+            content_padding=flet.padding.only(0,0,0,20)
         )

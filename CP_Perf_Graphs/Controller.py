@@ -3,8 +3,7 @@ import pandas
 import Model
 import View.MainScreen as MainScreen
 from bokeh.plotting import figure, show
-from bokeh.models import HoverTool, CustomJS
-
+from bokeh.models import HoverTool, DatetimeTickFormatter, Title
 
 class Controller:
     dat_file_path = None
@@ -30,18 +29,28 @@ class Controller:
             bokeh_source = pandas.DataFrame({"dates": epoch_timestamps, "values": ram_usages})
             bokeh_figure = figure(
                 x_axis_type='datetime',
-                title="RAM usage history",
+                title=Title(text="RAM usage history", text_font_size="24px", align="center"),
                 x_axis_label='Timeline (values were taken every minute)',
                 y_axis_label=f'Megabytes (total = {total_ram} Mb)',
-                sizing_mode='stretch_both'
+                sizing_mode = "stretch_width",
+                # sizing_mode='stretch_both',
+                y_range=(0, total_ram),
             )
             bokeh_figure.line(x='dates', y='values', source=bokeh_source)
-            bokeh_figure.scatter(x='dates', y='values', source=bokeh_source)
+            bokeh_figure.scatter(x='dates', y='values', size=5, source=bokeh_source)
+            bokeh_figure.varea(x='dates', y1=0, y2='values', alpha=0.3, source=bokeh_source)
             bokeh_hover = HoverTool(
                 tooltips=[('date', '@dates{%d/%m/%Y-%H:%M}'),
                           ('used', '@values{0} Mb'),
                           ('total', str(total_ram) + " Mb")],
                 formatters={'@dates': 'datetime'}
+            )
+            bokeh_figure.xaxis.formatter = DatetimeTickFormatter(
+                minutes=["%H:%M"],
+                hourmin=["%H:%M"],
+                hours=["%Y-%m-%d %H:%M"],
+                days=["%Y-%m-%d"],
+                months=["%Y-%m-%d"]
             )
             bokeh_figure.add_tools(bokeh_hover)
             show(bokeh_figure)

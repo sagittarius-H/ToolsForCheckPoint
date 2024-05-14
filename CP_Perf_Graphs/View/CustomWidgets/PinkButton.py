@@ -4,9 +4,11 @@ class PinkButton(flet.ElevatedButton):
     def __init__(self,
                  text,
                  height,
-                 on_click_method=None):
+                 on_click_method=None,
+                 width=None):
         super().__init__(
             text=text,
+            width=width,
             height=height,
             style=flet.ButtonStyle(
                 bgcolor={

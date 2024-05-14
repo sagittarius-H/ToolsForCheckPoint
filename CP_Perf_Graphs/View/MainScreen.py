@@ -3,6 +3,7 @@ import Controller
 import View.CustomWidgets.TitledContainer as TitledContainer
 import View.CustomWidgets.PinkButton as PinkButton
 import View.CustomWidgets.MessageBox as MessageBox
+import View.CustomWidgets.DatePicker as DatePicker
 
 class MainScreen:
     # Атрибуты для хранения ссылки на объект page и UI компонентов
@@ -17,8 +18,8 @@ class MainScreen:
         page.vertical_alignment = flet.MainAxisAlignment.CENTER
         page.horizontal_alignment = flet.CrossAxisAlignment.CENTER
         # параметры окна
-        page.window_height = 275
-        page.window_width = 620
+        page.window_height = 320
+        page.window_width = 720
         page.window_resizable = False
         page.window_maximizable = False
         page.window_center()
@@ -30,16 +31,18 @@ class MainScreen:
         MainScreen.page_controls["pick_files_dialog"] = pick_files_dialog
         # кнопки генерации графиков и открытия базы данных
         generate_button = PinkButton.PinkButton(text="Generate CPU/RAM Graphs",
+                                                width=320,
                                                 height=40,
                                                 on_click_method=Controller.Controller.on_click_generate)
         MainScreen.page_controls["generate_button"] = generate_button
         browse_button = PinkButton.PinkButton(text="Open .dat file",
-                                                height=40,
-                                                on_click_method=pick_files_dialog.pick_files)
+                                              width=153,
+                                              height=40,
+                                              on_click_method=pick_files_dialog.pick_files)
         MainScreen.page_controls["browse_button"] = browse_button
         # выбор временной зоны нужен для правильной конвертации Epoch в datetime
         timezone_picker = flet.Dropdown(
-            width=300,
+            width=310,
             height=40,
             content_padding=flet.padding.only(20, 0, 20, 0),
             text_size=13,
@@ -81,7 +84,7 @@ class MainScreen:
             text_size=12,
             read_only=True,
             disabled=True,
-            width=390,
+            width=477,
             height=40,
             content_padding=flet.padding.only(20,3,3,3),
         )
@@ -89,13 +92,17 @@ class MainScreen:
         # AlertDialog для отображения ошибки
         alert_box = MessageBox.MessageBox(
             text="You won't be able to create graphs until you open a cpview_services.dat "
-                 "file and specify correct timezone in dropdown menu",
+                 "file and specify correct parameters in second step",
             text_color=flet.colors.WHITE,
             bgcolor="#ff3d83",
             height=80,
             on_close_method=Controller.Controller.on_close_message_box
         )
         MainScreen.page_controls["alert_box"] = alert_box
+        # Выбор начальной даты для построения графика
+        start_date_picker = DatePicker.DatePicker()
+        # Выбор конечной даты для построения графика
+        end_date_picker = DatePicker.DatePicker()
         # Верхний контейнер
         first_container = TitledContainer.TitledContainer(
             width=page.window_width - 40,
@@ -112,15 +119,42 @@ class MainScreen:
         # Нижний контейнер
         second_container = TitledContainer.TitledContainer(
             width=page.window_width - 40,
-            title="2 Step - Specify correct timezone and generate graphs:",
-            content=flet.Row(
+            title="2 Step - Specify correct parameters and generate graphs:",
+            content=flet.Column(
                 controls=[
-                    timezone_picker,
-                    generate_button
-                ],
-                alignment=flet.MainAxisAlignment.SPACE_BETWEEN
+                    flet.Row(
+                        controls=[
+                            flet.Text("Start date:"),
+                            start_date_picker,
+                            flet.Text("End date:"),
+                            end_date_picker,
+                            flet.Dropdown(
+                                width=153,
+                                height=40,
+                                text_size=13,
+                                content_padding=flet.padding.only(20, 0, 20, 0),
+                                value="1 minute (default)",
+                                options=[
+                                    flet.dropdown.Option("1 minute (default)"),
+                                    flet.dropdown.Option("5 minutes"),
+                                    flet.dropdown.Option("10 minutes"),
+                                    flet.dropdown.Option("30 minutes"),
+                                    flet.dropdown.Option("1 hour"),
+                                ],
+
+                            )
+                        ]
+                    ),
+                    flet.Row(
+                        controls=[
+                            timezone_picker,
+                            generate_button
+                        ],
+                        alignment=flet.MainAxisAlignment.SPACE_BETWEEN
+                    ),
+                ]
             ),
-            height=80
+            height=130
         )
         # добавление элементов в Page
         page.add(
