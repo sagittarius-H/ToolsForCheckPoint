@@ -6,7 +6,8 @@ class MessageBox(flet.AlertDialog):
                  text_color,
                  bgcolor,
                  height,
-                 on_close_method,
+                 padding: flet.padding,
+                 padding_content: flet.padding
                  ):
         super().__init__(
             content=flet.Column(
@@ -19,7 +20,7 @@ class MessageBox(flet.AlertDialog):
                                 style=flet.ButtonStyle(
                                     shape=flet.RoundedRectangleBorder(radius=8)
                                 ),
-                                on_click=on_close_method
+                                on_click=MessageBox._on_close_box
                             )
                         ],
                         alignment=flet.MainAxisAlignment.END
@@ -30,7 +31,8 @@ class MessageBox(flet.AlertDialog):
                             color=text_color,
                             weight=flet.FontWeight.W_600
                         ),
-                        padding=flet.padding.only(20,0,20,0)
+                        padding=padding
+                        # padding=flet.padding.only(20,0,20,0)
                     )
                 ],
                 height=height
@@ -38,5 +40,11 @@ class MessageBox(flet.AlertDialog):
             bgcolor=bgcolor,
             modal=True,
             shape=flet.RoundedRectangleBorder(radius=8),
-            content_padding=flet.padding.only(0,0,0,20)
+            content_padding=padding_content,
+
         )
+    @staticmethod
+    def _on_close_box(e: flet.ControlEvent):
+        # ControlEvent ссылается на IconButton. Он вложен в Row>Column>MessageBox
+        e.control.parent.parent.parent.open = False
+        e.page.update()

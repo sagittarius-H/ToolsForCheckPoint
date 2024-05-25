@@ -1,9 +1,10 @@
 import flet
 
+
 class TitledContainer(flet.Container):
     def __init__(self,
-                 content,
-                 title,
+                 content: flet.Control,
+                 title: str,
                  height=None,
                  width=None,
                  padding=20,
