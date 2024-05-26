@@ -96,7 +96,7 @@ class MainScreen:
         page.data["dat_path_textfield"] = dat_path_textfield
 
         # AlertDialog для отображения ошибки если пользователь не указал параметры или путь БД
-        alert_box = MessageBox.MessageBox(
+        alert_box_params = MessageBox.MessageBox(
             text="You won't be able to create graphs until you:\n\n • Open a cpview_services.dat.\n "
                  "• Specify correct parameters in second step.",
             text_color=flet.colors.WHITE,
@@ -105,7 +105,18 @@ class MainScreen:
             padding=flet.padding.only(100, 0, 100, 0),
             padding_content=flet.padding.only(0, 0, 0, 60)
         )
-        page.data["alert_box"] = alert_box
+        page.data["alert_box_params"] = alert_box_params
+
+        alert_box_timerange = MessageBox.MessageBox(
+            text="Please, specify correct start and end date.\n"
+                 "Start date cannot be later than End date.",
+            text_color=flet.colors.WHITE,
+            bgcolor="#ff3d83",
+            height=80,
+            padding=flet.padding.only(100, 0, 100, 0),
+            padding_content=flet.padding.only(0, 0, 0, 20)
+        )
+        page.data["alert_box_timerange"] = alert_box_timerange
 
         # Диалоги с календарём для выбора дат
         pick_date_dialog1 = PopupCalendar.PopupCalendar()
@@ -122,6 +133,11 @@ class MainScreen:
             callback=start_date_picker.set_specific_date,
             obj=start_date_picker
         )
+        Observer.Observer(
+            "unset_accident_visibility",
+            callback=start_date_picker.unset_accident_visibility,
+            obj=start_date_picker
+        )
 
         # Выбор конечной даты для построения графика - кнопка контейнер
         end_date_picker = DatePicker.DatePickerForm(pick_date_dialog2)
@@ -129,6 +145,11 @@ class MainScreen:
         Observer.Observer(
             "update_datepicker_form_" + str(id(pick_date_dialog2)),
             callback=end_date_picker.set_specific_date,
+            obj=end_date_picker
+        )
+        Observer.Observer(
+            "unset_accident_visibility",
+            callback=end_date_picker.unset_accident_visibility,
             obj=end_date_picker
         )
 
@@ -147,8 +168,10 @@ class MainScreen:
                 flet.dropdown.Option("30 minutes"),
                 flet.dropdown.Option("1 hour")
             ],
-            disabled=True
+            disabled=True,
+            on_change=Controller.Controller.on_change_frequency
         )
+        page.data["frequency_picker"] = frequency_picker
 
         # Верхний контейнер
         first_container = TitledContainer.TitledContainer(

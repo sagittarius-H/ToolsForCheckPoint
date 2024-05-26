@@ -1,4 +1,5 @@
 import flet
+import CustomEvents.Event as Event
 import View.CustomWidgets.DatePickerPopup as DatePickerPopup
 
 
@@ -20,7 +21,7 @@ class DatePickerForm(flet.Container):
                         read_only=True,
                         disabled=True,
                         width=110,
-                        height=40,
+                        height=40
                     ),
                     # Кнопка иконка с bgcolor и hover color - выбор даты
                     flet.Container(
@@ -52,6 +53,26 @@ class DatePickerForm(flet.Container):
     def set_specific_date(self, date: str):
         self.date = date
         self.content.controls[0].value = date
+        self.content.controls[0].disabled = False
+        Event.Event("unset_accident_visibility")
+
+    # При неправильно выбранной дате можно задать состояние ошибки
+    def set_accident_visibility(self):
+        self.content.controls[0].border_color = flet.colors.RED
+        self.content.controls[0].color = flet.colors.RED
+        self.content.controls[0].label_style = flet.TextStyle(
+            color=flet.colors.RED
+        )
+        self.content.controls[0].border = flet.InputBorder.OUTLINE
+        self.content.controls[0].border_width = 2
+
+    # При возникновении CustomEvent или ручном вызове можно снять состояние ошибки
+    def unset_accident_visibility(self):
+        self.content.controls[0].border_color = None
+        self.content.controls[0].color = None
+        self.content.controls[0].label_style = None
+        self.content.controls[0].border = None
+        self.content.controls[0].border_width = 1
 
     @staticmethod
     def _set_icon_color_according_status(button_status: bool):

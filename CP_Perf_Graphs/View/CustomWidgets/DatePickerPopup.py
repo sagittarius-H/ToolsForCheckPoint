@@ -186,7 +186,7 @@ class CustomCalendar(flet.Container):
                         flet.TextButton(
                             text="Choose",
                             style=flet.ButtonStyle(color="#efefef"),
-                            on_click=self._on_close_popup_calendar
+                            on_click=CustomCalendar._on_close_popup_calendar
                         )
                     ],
                     alignment=flet.MainAxisAlignment.CENTER,
@@ -296,14 +296,14 @@ class CustomCalendar(flet.Container):
             month=self._current_month,
             year=self._current_year
         )
-        print(self.chosen_date)
         e.control.bgcolor = self.accent_color
         e.control.data = "chosen"
         e.control.update()
         Event.Event("update_datepicker_form_" + str(self.parent_popup_id),
                     self.chosen_date.strftime("%d/%m/%Y"))
 
-    def _on_close_popup_calendar(self, e: flet.ControlEvent):
+    @staticmethod
+    def _on_close_popup_calendar(e: flet.ControlEvent):
         # Закрываем отображение datepicker диалога
         e.control.parent.parent.parent.parent.parent.parent.parent.open = False
         e.page.update()

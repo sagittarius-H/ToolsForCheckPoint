@@ -18,7 +18,7 @@ class Event:
                 self.event_name + "_status",
                 None
             )
-            if status:
+            if status is not None:
                 # Изменяем статус события, т.к. оно произошло
                 observer.observable_events[self.event_name + "_status"] = True
                 # Выясняем есть связанные события
